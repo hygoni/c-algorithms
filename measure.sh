@@ -5,6 +5,8 @@ runtime_set_with_plsan=()
 name1=()
 name2=()
 
+CC=$PWD/../build/bin/clang
+
 CC=$CC ./autogen.sh
 
 make clean
