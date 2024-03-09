@@ -39,8 +39,8 @@ CFLAGS="-g -fno-omit-frame-pointer -fsanitize=precise-leak" CC=$CC ./autogen.sh
 make -j$(nproc)
 make -j$(nproc) -C src libcalgtest.a
 
-rm -rfv flamegraph flamegraph.zip
-mkdir -v flamegraph
+rm -rf output
+mkdir output
 
 for t in $(ls ./test/test-*.c);
 do
@@ -60,19 +60,20 @@ do
   # generate flamegraph
   rm -f $tc.svg
   rm -f perf.data
-  perf record -e cpu-clock -F 1999 -g ./$tc -o - | perf script -i - | ./FlameGraph/stackcollapse-perf.pl | ./FlameGraph/flamegraph.pl > $tc.svg
-  mv $tc.svg flamegraph
+  sudo perf record -e cpu-clock -F 999 -g -o perf.data ./$tc
+  sudo perf script -i perf.data > perf.script
+  sudo cat perf.script | sudo ./FlameGraph/stackcollapse-perf.pl > perf.stack
+  sudo cat perf.stack | sudo ./FlameGraph/flamegraph.pl > $tc.svg
+  mv $tc.svg output
 done
-zip -r flamegraph.zip ./flamegraph
 
-rm output
 index=1
 while [ $index -ne ${#runtime_set_without_plsan[@]} ]; do
     num1=${runtime_set_without_plsan[$index]}
     num2=${runtime_set_with_plsan[$index]}
-    echo -n "${name1[$index]} : " >> output
-    echo "scale=2 ; $num2 / $num1" | bc >> output
+    echo -n "${name1[$index]} : " >> output/output.txt
+    echo "scale=2 ; $num2 / $num1" | bc >> output/output.txt
     ((index++))
 done
 
-cat output
+cat output/output.txt
