@@ -18,7 +18,7 @@ else
 	is_gcc=false
 fi
 
-TEST_CFLAGS=""
+TEST_CFLAGS="$CFLAGS"
 
 # Turn on all warnings for gcc.  Turn off optimisation for the test build.
 
@@ -64,7 +64,7 @@ AM_CONDITIONAL(USE_VALGRIND, $use_valgrind)
 # of the library doesn't get the optimisation flags.
 
 MAIN_CFLAGS="$CFLAGS"
-CFLAGS=""
+CFLAGS="$CFLAGS"
 
 AM_CONFIG_HEADER(config.h:config.h.in)
 
