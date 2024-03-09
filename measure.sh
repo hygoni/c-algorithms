@@ -60,8 +60,7 @@ do
   # generate flamegraph
   rm -f $tc.svg
   rm -f perf.data
-  perf record -F 1999 -g ./$tc -o perf.data
-  perf script -i perf.data | ./FlameGraph/stackcollapse-perf.pl | ./FlameGraph/flamegraph.pl > $tc.svg
+  perf record -F 1999 -g ./$tc -o - | perf script -i - | ./FlameGraph/stackcollapse-perf.pl | ./FlameGraph/flamegraph.pl > $tc.svg
   mv $tc.svg flamegraph
 done
 zip -r flamegraph.zip ./flamegraph
